@@ -37,6 +37,8 @@ def model_predict(img_path, model):
     res = model.predict(img)
     index = np.argmax(res)
     classes = ["Sunflower", "Rose", "Daisy", "Dandelion", "Tulip"]
+    if os.path.exists(img_path):
+        os.remove(img_path)
     return classes[index]
 
 @app.route('/', methods=['GET'])
@@ -53,8 +55,11 @@ def upload():
 
         # Save the file to ./uploads
         basepath = os.path.dirname(__file__)
+        filedirpath = os.path.join(basepath, 'uploads')
+        if not os.path.isdir(filedirpath):
+            os.mkdir(filedirpath)
         file_path = os.path.join(
-            basepath, 'uploads', secure_filename(f.filename))
+            filedirpath, secure_filename(f.filename))
         f.save(file_path)
         
         # Make prediction
